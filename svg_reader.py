@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from optimization import Optimization
 import glob, os
-import threading
 import clipboard
 
 
@@ -51,22 +50,6 @@ class Reader(object):
         self.file = file
         self.paths, self.attributes = svg2paths(file)
 
-        # f = open(self.file, 'r')
-        # script = f.read()
-        # try:
-        #     scale = script[script.find("scale(") + 6:script.find(")", script.find("scale(") + 6)]
-        #     scale_x = float(scale[:scale.find(",")])
-        #     scale_y = float(scale[scale.find(",") + 1:])
-        #     self.vertical_flip = False if scale_y < 0 else True
-        #     self.horizontal_flip = False if scale_x < 0 else True
-        #
-        # except:
-        #     self.vertical_flip = False
-        #     self.horizontal_flip = False
-        #
-        # final:
-        #     f.close()
-
         xmin, xmax, ymin, ymax = self.find_bbox()
         self.width = xmax - xmin
         self.height = ymax - ymin
@@ -84,8 +67,6 @@ class Reader(object):
             self.off_x = -xmin * self.ratio
             self.off_y = -ymin * self.ratio + abs(HEIGHT - self.height * self.ratio) / 2
 
-        # print("Horizontal flip:", self.horizontal_flip)
-        # print("Vertical flip:", self.vertical_flip)
         self.targets = []
 
     def find_bbox(self):
@@ -189,37 +170,8 @@ class Reader(object):
 
         return result.replace(' ', '')
 
-    # def optimize(self):
-    #     result = list()
-    #     # print(self.targets)
-    #     for idx, target in enumerate(self.targets[:-1]):
-    #         if target[-1] == 0 and self.targets[idx + 1][-1] != OFFSET:
-    #             start = [round(num, 4) for num in target[:-1]]
-    #             end = [round(num, 4) for num in self.targets[idx + 1][:-1]]
-    #             result.append([start, end])
-    #     # result = result[:-1]
-    #     print(result)
-    #     opt_targets = list()
-    #     opt_path, score = genetic_algorithm(result, cost, cross, mut, n_pop=len(result) * 20)
-    #     for idx, vect in enumerate(opt_path):
-    #         start, end = vect
-    #         if len(opt_targets) == 0:
-    #             opt_targets.append(start + [OFFSET])
-    #             opt_targets.append(start + [SURFACE])
-    #         elif opt_targets[-1][:2] != start:
-    #             opt_targets.append(opt_targets[-1][:2] + [OFFSET])
-    #             opt_targets.append(start + [OFFSET])
-    #             opt_targets.append(start + [SURFACE])
-    #         opt_targets.append(end + [SURFACE])
-    #     opt_targets.append(opt_targets[-1][:2] + [OFFSET])
-    #     print(opt_targets)
-    #
-    #     self.targets = opt_targets
-    #     # clipboard.copy(result.replace(' ', ''))
-
     def optimize(self):
         result = list()
-        # print(self.targets)
         segment = list()
         for idx, target in enumerate(self.targets[:]):
             if target[-1] == SURFACE:
@@ -231,22 +183,21 @@ class Reader(object):
         genetic = Optimization(result, n_pop=1000, power=1, n_iter=100, r_mut=.8, n_cross=1)
         opt_path, score = genetic.run()
         del genetic
-        print("Scores:", score)
+        print("Score:", score)
         genetic = Optimization(opt_path, n_pop=1000, power=1, n_iter=100, r_mut=.8, n_cross=3)
         opt_path, score = genetic.run()
         del genetic
-        print("Scores:", score)
+        print("Score:", score)
         genetic = Optimization(opt_path, n_pop=1000, power=1, n_iter=100, r_mut=.8, n_cross=6)
         opt_path, score = genetic.run()
         del genetic
-        print("Scores:", score)
+        print("Score:", score)
         for idx, seg in enumerate(opt_path):
             opt_targets.append(seg[0] + [OFFSET])
             for target in seg:
                 opt_targets.append(target + [SURFACE])
             opt_targets.append(seg[-1] + [OFFSET])
         self.targets = opt_targets
-        # clipboard.copy(result.replace(' ', ''))
 
     def canvas(self):
         targets = self.targets

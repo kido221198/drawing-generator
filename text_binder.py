@@ -7,8 +7,8 @@ import json
 # from irc5_client import tcp_client
 from emb60r_client import tcp_client
 
-# WIDTH = 60.0
-# HEIGHT = 105.0
+# AREA_W = 60.0
+# AREA_H = 105.0
 # MARGIN = 10.0
 
 AREA_H = 95.

@@ -12,8 +12,8 @@ from svgtrace import trace
 from pathlib import Path
 from irc5_client import tcp_client
 
-# WIDTH = 60.
-# HEIGHT = 105.
+# AREA_W = 60.
+# AREA_H = 105.
 # MARGIN = 10.0
 
 AREA_H = 95.
@@ -213,8 +213,8 @@ class ImageExtractor():
         plt.show(block=False)
 
     def transform(self, x, y, offs=False):
-        # x2 = round(MARGIN + HEIGHT - (self.ratio * x - self.off_x), 3) if self.horizontal_flip else round(MARGIN + self.ratio * x + self.off_x, 3)
-        # y2 = round(MARGIN + HEIGHT - (self.ratio * y - self.off_y), 3) if self.vertical_flip else round(MARGIN + self.ratio * y + self.off_y, 3)
+        # x2 = round(MARGIN + AREA_H - (self.ratio * x - self.off_x), 3) if self.horizontal_flip else round(MARGIN + self.ratio * x + self.off_x, 3)
+        # y2 = round(MARGIN + AREA_H - (self.ratio * y - self.off_y), 3) if self.vertical_flip else round(MARGIN + self.ratio * y + self.off_y, 3)
         x2 = round(LEFT_MARGIN + self.ratio * x + self.off_x, 3)
         y2 = round(BOTTOM_MARGIN + self.ratio * y + self.off_y, 3)
         z2 = OFFSET if offs else SURFACE
